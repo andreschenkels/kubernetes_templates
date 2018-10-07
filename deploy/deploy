@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# ****************************************************************************************************
+# Deployment main script - order matters!
+# ****************************************************************************************************
+
+# Current directory
+cwd=`pwd`
+
+# 1 - Secrets
+ls $cwd/secrets/*-$ENV.yaml | xargs -I yaml kubectl apply -f yaml
+
+# 2 - MySQL / Adminer
+kubectl apply -f $cwd/mysql/mysql-pv.yaml
+kubectl apply -f $cwd/mysql/mysql-pvc.yaml
+kubectl apply -f $cwd/mysql/mysql-service.yaml
+kubectl apply -f $cwd/mysql/mysql-deployment.yaml
+
+kubectl apply -f $cwd/adminer/adminer-service.yaml
+kubectl apply -f $cwd/adminer/adminer-deployment.yaml
+
+# 3 - API
+kubectl apply -f $cwd/api/api-service.yaml
+kubectl apply -f $cwd/api/api-deployment.yaml
+
+# 4 - App
+kubectl apply -f $cwd/app/app-config-$ENV.yaml
+kubectl apply -f $cwd/app/app-service.yaml
+kubectl apply -f $cwd/app/app-deployment.yaml

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: <REGISTRY>/<REPOSITORY>:<TAG>
+          imagePullPolicy: Always
+          env:
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: PASSWORD
+          - name: MYSQL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: USERNAME
+          ports:
+            - containerPort: 5000
+      imagePullSecrets:
+        - name: docker

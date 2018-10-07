@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# ****************************************************************************************************
+# Setup script for a 1 node k8s cluster, with 1 master holding pods as well.
+# ****************************************************************************************************
+
+# Initializing k8s master node, assuming all prep steps were performed
+# Disabling swap
+swapoff -a
+# Cleaning up previous clusters
+kubeadm reset
+# Initializing master with Flannel as a pod network
+kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<IP_ADDRESS>
+
+# Runnung kubectl as non root
+mkdir -p $HOME/.kube
+cp /etc/kubernetes/admin.conf $HOME/.kube/config
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config more generally if not logged in as root
+chown <USER>:<GROUP> $HOME/.kube/config
+
+# Installing Flannel as pod network
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
+# Removing master isolation (1 node cluster)
+kubectl taint nodes --all node-role.kubernetes.io/master-
