@@ -20,3 +20,7 @@ The MySQL database name must be provided in `conf.py` in place of `<DATABASE>`.
 * Docker image names must be provided for `api` and `app` deployments.
 * app config files need the IP/host name and port of the API role in place of `<HOSTNAME>:<PORT>`.
 * First time the `mysql` deployment is created, the appropriate user(s) and database(s) have to be manually created, see `deploy/README.md`.
+
+### Scripts
+* `kubeadm_init`: startup script for a 1 node (master) kubernetes cluster, e.g. inside a virtual machine. Assumes all setup steps as described in `deploy/README.md` were completed. Must be run as super user.
+* `deploy`: run this script to create all secrets, services and deployments, in the right order for pods to discover the right services.
